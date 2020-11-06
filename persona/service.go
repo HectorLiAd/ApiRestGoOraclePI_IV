@@ -1,8 +1,8 @@
 //Logica de negocio para consumir del repository
-package usuario
+package persona
 
 type Service interface {
-	GetUsuarioById(param *getUsuarioByIdRequest) (*Usuario, error)
+	GetPersonById(param *getPersonByIdRequest) (*Persona, error)
 }
 
 type service struct {
@@ -15,7 +15,7 @@ func NerService(repo Repository) Service {
 	}
 }
 
-func (s *service) GetUsuarioById(param *getUsuarioByIdRequest) (*Usuario, error) {
+func (s *service) GetPersonById(param *getPersonByIdRequest) (*Persona, error) {
 	//Logica del negocio
-	return s.repo.GetUsuarioById(param.UsuarioId)
+	return s.repo.GetPersonById(param.PersonaId)
 }
