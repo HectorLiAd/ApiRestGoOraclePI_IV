@@ -2,7 +2,7 @@ package persona
 
 import "time"
 
-type Persona struct {
+type Person struct {
 	Id               string    `json:"id"`
 	Nombre           string    `json:"nombre_personal"`
 	Apellido_paterno string    `json:"apellido_paterno"`
@@ -11,4 +11,9 @@ type Persona struct {
 	Dni              string    `json:"dni"`
 	Fecha_nacimiento time.Time `json:"fecha_nacimiento"`
 	Edad             int       `json:"edad"`
+}
+
+type PersonList struct {
+	Data         []*Person `json:"data"`
+	TotalRecords int       `json:"totalRecords"`
 }

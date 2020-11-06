@@ -2,7 +2,8 @@
 package persona
 
 type Service interface {
-	GetPersonById(param *getPersonByIdRequest) (*Persona, error)
+	GetPersonById(param *getPersonByIdRequest) (*Person, error)
+	GetPersons(params *getPersonsRequest) (*PersonList, error)
 }
 
 type service struct {
@@ -15,7 +16,22 @@ func NerService(repo Repository) Service {
 	}
 }
 
-func (s *service) GetPersonById(param *getPersonByIdRequest) (*Persona, error) {
+func (s *service) GetPersonById(param *getPersonByIdRequest) (*Person, error) {
 	//Logica del negocio
 	return s.repo.GetPersonById(param.PersonaId)
+}
+
+func (s *service) GetPersons(params *getPersonsRequest) (*PersonList, error) {
+	person, err := s.repo.GetPersons(params)
+	if err != nil {
+		panic(err)
+	}
+	totalPersons, err := s.repo.GetTotalPersons()
+	if err != nil {
+		panic(err)
+	}
+	return &PersonList{
+		Data:         person,
+		TotalRecords: totalPersons,
+	}, nil
 }
