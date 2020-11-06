@@ -22,6 +22,10 @@ func (s *service) GetPersonById(param *getPersonByIdRequest) (*Person, error) {
 }
 
 func (s *service) GetPersons(params *getPersonsRequest) (*PersonList, error) {
+	//Logica del negocio
+	params.Limit = params.Offset + params.Limit
+	params.Offset = params.Offset + 1
+
 	person, err := s.repo.GetPersons(params)
 	if err != nil {
 		panic(err)

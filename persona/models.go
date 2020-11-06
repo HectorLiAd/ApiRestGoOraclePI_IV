@@ -10,7 +10,7 @@ type Person struct {
 	Genero           string    `json:"Genero"`
 	Dni              string    `json:"dni"`
 	Fecha_nacimiento time.Time `json:"fecha_nacimiento"`
-	Edad             int       `json:"edad"`
+	Estado           int       `json:"estado"`
 }
 
 type PersonList struct {

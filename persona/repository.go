@@ -22,7 +22,7 @@ func NewRepository(dataBaseConnection *sql.DB) Repository {
 }
 
 func (repo *repository) GetPersonById(personaId string) (*Person, error) {
-	const sql = `SELECT * FROM PERSONA WHERE PERSONAS_ID = :1`
+	const sql = `SELECT * FROM PERSONA WHERE PERSONA_ID = :1`
 	row := repo.db.QueryRow(sql, personaId)
 	persona := &Person{}
 	err := row.Scan(
@@ -33,7 +33,7 @@ func (repo *repository) GetPersonById(personaId string) (*Person, error) {
 		&persona.Genero,
 		&persona.Dni,
 		&persona.Fecha_nacimiento,
-		&persona.Edad,
+		&persona.Estado,
 	)
 	if err != nil {
 		fmt.Println("No hay resultados")
@@ -43,11 +43,11 @@ func (repo *repository) GetPersonById(personaId string) (*Person, error) {
 }
 
 func (repo *repository) GetPersons(params *getPersonsRequest) ([]*Person, error) {
-	const sql = `SELECT PERSONAS_ID,NOMBRE,APELLIDO_P,APELLIDO_M,GENERO,DNI,FECHA_NACIMIENTO,ESTADO FROM(
+	const sql = `SELECT PERSONA_ID,NOMBRE,APELLIDO_P,APELLIDO_M,GENERO,DNI,FECHA_NACIMIENTO,ESTADO FROM(
 				SELECT ROWNUM COD, E.* FROM PERSONA E
 				) WHERE COD BETWEEN :1 AND :2 
 				ORDER BY COD`
-	result, err := repo.db.Query(sql, (params.Offset + 1), (params.Offset + params.Limit))
+	result, err := repo.db.Query(sql, params.Offset, params.Limit)
 
 	if err != nil {
 		panic(err)
@@ -64,7 +64,7 @@ func (repo *repository) GetPersons(params *getPersonsRequest) ([]*Person, error)
 			&persona.Genero,
 			&persona.Dni,
 			&persona.Fecha_nacimiento,
-			&persona.Edad,
+			&persona.Estado,
 		)
 		if err != nil {
 			panic(err)

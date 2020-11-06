@@ -2,6 +2,7 @@ package persona
 
 import (
 	"context"
+	"time"
 
 	"github.com/go-kit/kit/endpoint"
 )
@@ -13,6 +14,16 @@ type getPersonByIdRequest struct {
 type getPersonsRequest struct {
 	Limit  int //CUANTOS REGISTROS TRAER
 	Offset int //DE QUE NUMERO DE FILA INICIARA LA CONSULTA
+}
+
+type getAddPersonRequest struct {
+	nombre           string
+	apellido_paterno string
+	apellido_materno string
+	genero           string
+	dni              string
+	fecha_nacimiento time.Time
+	estado           int
 }
 
 func makeGetPersonByIdEndPoint(s Service) endpoint.Endpoint {
