@@ -10,6 +10,7 @@ type Repository interface {
 	GetPersons(params *getPersonsRequest) ([]*Person, error)
 	GetTotalPersons() (int, error)
 	InsertPerson(params *getAddPersonRequest) (int64, error)
+	UpdatePerson(params *updatePersonRequest) (int64, error)
 }
 
 type repository struct {
@@ -105,6 +106,30 @@ func (repo *repository) InsertPerson(params *getAddPersonRequest) (int64, error)
 		params.Apellido_materno, params.Genero, params.Dni,
 		params.Fecha_nacimiento, status_query)
 
+	if err != nil {
+		panic(err)
+	}
+	id, _ := result.LastInsertId()
+	return id, nil
+}
+
+func (repo *repository) UpdatePerson(params *updatePersonRequest) (int64, error) {
+	var status_query int
+	const sql = `DECLARE
+					ST_PERSONA PERSONA%ROWTYPE;
+				BEGIN
+					ST_PERSONA.PERSONA_ID := :1;
+					ST_PERSONA.NOMBRE := :2;
+					ST_PERSONA.APELLIDO_P := :3;
+					ST_PERSONA.APELLIDO_M := :4 ;
+					ST_PERSONA.GENERO := :5;
+					ST_PERSONA.DNI := :6;
+					ST_PERSONA.FECHA_NACIMIENTO := :7;
+					PKG_CRUD_PERSONA.SPU_ACTUALIZAR_PERSONA(ST_PERSONA, :8);
+				END;`
+	result, err := repo.db.Exec(sql, params.Id, params.Nombre, params.Apellido_paterno,
+		params.Apellido_materno, params.Genero, params.Dni,
+		params.Fecha_nacimiento, status_query)
 	if err != nil {
 		panic(err)
 	}

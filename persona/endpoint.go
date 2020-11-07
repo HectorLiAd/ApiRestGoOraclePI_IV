@@ -24,6 +24,16 @@ type getAddPersonRequest struct {
 	Fecha_nacimiento string
 }
 
+type updatePersonRequest struct {
+	Id               string
+	Nombre           string
+	Apellido_paterno string
+	Apellido_materno string
+	Genero           string
+	Dni              string
+	Fecha_nacimiento string
+}
+
 func makeGetPersonByIdEndPoint(s Service) endpoint.Endpoint {
 	getPersonById := func(ctx context.Context, request interface{}) (interface{}, error) {
 		rep := request.(getPersonByIdRequest)
@@ -60,4 +70,17 @@ func makeAddPersonEndpoint(s Service) endpoint.Endpoint {
 	}
 
 	return addPersonEndpoint
+}
+
+func makeUpdatePersonEndpoint(s Service) endpoint.Endpoint {
+	updatePersonEndpoint := func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(updatePersonRequest)
+		r, err := s.UpdatePerson(&req)
+
+		if err != nil {
+			panic(err)
+		}
+		return r, nil
+	}
+	return updatePersonEndpoint
 }
