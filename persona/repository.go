@@ -9,6 +9,7 @@ type Repository interface {
 	GetPersonById(personaId string) (*Person, error)
 	GetPersons(params *getPersonsRequest) ([]*Person, error)
 	GetTotalPersons() (int, error)
+	InsertPerson(params *getAddPersonRequest) (int64, error)
 }
 
 type repository struct {
@@ -85,4 +86,33 @@ func (repo *repository) GetTotalPersons() (int, error) {
 		panic(err)
 	}
 	return total, nil
+}
+
+func (repo *repository) InsertPerson(params *getAddPersonRequest) (int64, error) {
+	fmt.Println(params.nombre)
+	fmt.Println(params.apellido_paterno)
+	fmt.Println(params.apellido_materno)
+	fmt.Println(params.dni)
+	fmt.Println(params.fecha_nacimiento)
+	var status_query int
+	const sql = `DECLARE
+					ST_PERSONA PERSONA%ROWTYPE;
+				BEGIN
+					ST_PERSONA.NOMBRE := :1;
+					ST_PERSONA.APELLIDO_P := :2;
+					ST_PERSONA.APELLIDO_M := :3 ;
+					ST_PERSONA.GENERO := :4;
+					ST_PERSONA.DNI := :5;
+					ST_PERSONA.FECHA_NACIMIENTO := :6;
+					PKG_CRUD_PERSONA.SPU_AGREGAR_PERSONA(ST_PERSONA, :7);
+				END`
+	_, err := repo.db.Exec(sql, params.nombre, params.apellido_paterno,
+		params.apellido_materno, params.genero, params.dni,
+		params.fecha_nacimiento, status_query)
+
+	if err != nil {
+		panic(err)
+	}
+	var id int64 = 1
+	return id, nil
 }

@@ -24,36 +24,47 @@ func main() {
 
 }
 
-func pruebasBD() {
-	// INSERTAR REGISTROS
-	// codigo := "2020PER000013"
-	// persona := &persona.Persona{}
-
-	// const sql = `SELECT * FROM PERSONA WHERE PERSONAS_ID = :1`
-	// row := db.QueryRow(sql, codigo)
-
-	// err := row.Scan(
-	// 	&persona.Id,
-	// 	&persona.Nombre,
-	// 	&persona.Apellido_paterno,
-	// 	&persona.Apellido_materno,
-	// 	&persona.Genero,
-	// 	&persona.Dni,
-	// 	&persona.Fecha_nacimiento,
-	// 	&persona.Edad,
-	// )
-
-	// if err != nil {
-	// 	fmt.Println("Error running query")
-	// 	fmt.Println(err)
-	// 	return
-	// }
-
-	// fmt.Printf(persona.Id)
-
-	// const sql = "INSERT INTO PERSONA ( NOMBRE, APELLIDO_P, APELLIDO_M, ESTADO ) VALUES('02', :1, :2, :3, :4);"
-
-	// if _, err := db.Exec(sql, "s", "efs", "bd", 0); err != nil {
-	// 	log.Fatal(err)
-	// }
+/*
+type addPersonRequest struct {
+	Id               string
+	Nombre           string
+	Apellido_paterno string
+	Apellido_materno string
+	Genero           string
+	Dni              string
 }
+
+func pruebasBD(db *sql.DB) {
+
+	// INSERTAR REGISTROS
+	persona := &addPersonRequest{}
+	persona.Id = "ffs"
+	persona.Nombre = "ffs"
+	persona.Apellido_paterno = "ffs"
+	persona.Apellido_materno = "ffs"
+	persona.Genero = "m"
+	persona.Dni = "ffs"
+	dato := 0
+
+	var salida *sql.Out
+	salida.Dest = &dato
+
+	const sql = `DECLARE
+					ST_PERSONA PERSONA%ROWTYPE;
+				BEGIN
+					ST_PERSONA.NOMBRE := :1;
+					ST_PERSONA.APELLIDO_P := :2;
+					ST_PERSONA.APELLIDO_M := :3 ;
+					ST_PERSONA.GENERO := :4;
+					ST_PERSONA.DNI := :5;
+					PKG_CRUD_PERSONA.SPU_AGREGAR_PERSONA(ST_PERSONA, :6);
+				END;`
+	_, err := db.Exec(sql, &persona.Nombre, &persona.Apellido_paterno, &persona.Apellido_materno,
+		&persona.Genero, &persona.Dni, salida)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("Salida: ", dato)
+}
+*/

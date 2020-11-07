@@ -12,20 +12,27 @@ import (
 func MakeHttpHandler(s Service) http.Handler {
 	r := chi.NewRouter()
 
-	getUserByHandler := kithttp.NewServer(
+	getPersonByHandler := kithttp.NewServer(
 		makeGetPersonByIdEndPoint(s),
 		getPersonByIdRequestDecoder,
 		kithttp.EncodeJSONResponse,
 	)
-	r.Method(http.MethodGet, "/{id}", getUserByHandler)
+	r.Method(http.MethodGet, "/{id}", getPersonByHandler)
 
-	getProductHandler := kithttp.NewServer(
+	getPersonHandler := kithttp.NewServer(
 		makeGetPersonsEndPoint(s),
 		getPersonsRequestDecoder,
 		kithttp.EncodeJSONResponse,
 	)
+	r.Method(http.MethodPost, "/paginated", getPersonHandler)
 
-	r.Method(http.MethodPost, "/paginated", getProductHandler)
+	addPersonHandler := kithttp.NewServer(
+		makeAddPersonEndpoint(s),
+		addPersonRequestDecoder,
+		kithttp.EncodeJSONResponse,
+	)
+
+	r.Method(http.MethodPost, "/", addPersonHandler)
 	return r
 }
 
@@ -40,6 +47,15 @@ func getPersonByIdRequestDecoder(context context.Context, r *http.Request) (inte
 func getPersonsRequestDecoder(context context.Context, r *http.Request) (interface{}, error) {
 	request := getPersonsRequest{}
 	err := json.NewDecoder(r.Body).Decode(&request) //EL REQUEST QUE QUEREMOS DECODIFICAR ESTA EN BADY
+	if err != nil {
+		panic(err)
+	}
+	return request, nil
+}
+
+func addPersonRequestDecoder(context context.Context, r *http.Request) (interface{}, error) {
+	request := getAddPersonRequest{}
+	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
 		panic(err)
 	}

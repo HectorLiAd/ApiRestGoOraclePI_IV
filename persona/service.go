@@ -4,6 +4,7 @@ package persona
 type Service interface {
 	GetPersonById(param *getPersonByIdRequest) (*Person, error)
 	GetPersons(params *getPersonsRequest) (*PersonList, error)
+	InsertPerson(params *getAddPersonRequest) (int64, error)
 }
 
 type service struct {
@@ -38,4 +39,8 @@ func (s *service) GetPersons(params *getPersonsRequest) (*PersonList, error) {
 		Data:         person,
 		TotalRecords: totalPersons,
 	}, nil
+}
+
+func (s *service) InsertPerson(params *getAddPersonRequest) (int64, error) {
+	return s.repo.InsertPerson(params)
 }
