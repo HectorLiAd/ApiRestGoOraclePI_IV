@@ -89,11 +89,6 @@ func (repo *repository) GetTotalPersons() (int, error) {
 }
 
 func (repo *repository) InsertPerson(params *getAddPersonRequest) (int64, error) {
-	fmt.Println(params.nombre)
-	fmt.Println(params.apellido_paterno)
-	fmt.Println(params.apellido_materno)
-	fmt.Println(params.dni)
-	fmt.Println(params.fecha_nacimiento)
 	var status_query int
 	const sql = `DECLARE
 					ST_PERSONA PERSONA%ROWTYPE;
@@ -105,14 +100,14 @@ func (repo *repository) InsertPerson(params *getAddPersonRequest) (int64, error)
 					ST_PERSONA.DNI := :5;
 					ST_PERSONA.FECHA_NACIMIENTO := :6;
 					PKG_CRUD_PERSONA.SPU_AGREGAR_PERSONA(ST_PERSONA, :7);
-				END`
-	_, err := repo.db.Exec(sql, params.nombre, params.apellido_paterno,
-		params.apellido_materno, params.genero, params.dni,
-		params.fecha_nacimiento, status_query)
+				END;`
+	result, err := repo.db.Exec(sql, params.Nombre, params.Apellido_paterno,
+		params.Apellido_materno, params.Genero, params.Dni,
+		params.Fecha_nacimiento, status_query)
 
 	if err != nil {
 		panic(err)
 	}
-	var id int64 = 1
+	id, _ := result.LastInsertId()
 	return id, nil
 }

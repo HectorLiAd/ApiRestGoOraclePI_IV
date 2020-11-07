@@ -22,6 +22,7 @@ func main() {
 	r.Mount("/persona", persona.MakeHttpHandler(personaServicio))
 	http.ListenAndServe(":3000", r)
 
+	// pruebasBD(db)
 }
 
 /*
@@ -32,22 +33,21 @@ type addPersonRequest struct {
 	Apellido_materno string
 	Genero           string
 	Dni              string
+	Fecha_nac        string
 }
 
 func pruebasBD(db *sql.DB) {
 
 	// INSERTAR REGISTROS
 	persona := &addPersonRequest{}
-	persona.Id = "ffs"
-	persona.Nombre = "ffs"
-	persona.Apellido_paterno = "ffs"
-	persona.Apellido_materno = "ffs"
-	persona.Genero = "m"
+	persona.Id = "fXXXXXfs"
+	persona.Nombre = "XXXXXXX"
+	persona.Apellido_paterno = "XXXXX"
+	persona.Apellido_materno = "XXXXXX"
+	persona.Genero = "M"
 	persona.Dni = "ffs"
+	persona.Fecha_nac = "27-04-2000"
 	dato := 0
-
-	var salida *sql.Out
-	salida.Dest = &dato
 
 	const sql = `DECLARE
 					ST_PERSONA PERSONA%ROWTYPE;
@@ -57,14 +57,13 @@ func pruebasBD(db *sql.DB) {
 					ST_PERSONA.APELLIDO_M := :3 ;
 					ST_PERSONA.GENERO := :4;
 					ST_PERSONA.DNI := :5;
-					PKG_CRUD_PERSONA.SPU_AGREGAR_PERSONA(ST_PERSONA, :6);
+					ST_PERSONA.FECHA_NACIMIENTO := :6;
+					PKG_CRUD_PERSONA.SPU_AGREGAR_PERSONA(ST_PERSONA, :7);
 				END;`
 	_, err := db.Exec(sql, &persona.Nombre, &persona.Apellido_paterno, &persona.Apellido_materno,
-		&persona.Genero, &persona.Dni, salida)
+		&persona.Genero, &persona.Dni, &persona.Fecha_nac, dato)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println("Salida: ", dato)
-}
-*/
+}*/

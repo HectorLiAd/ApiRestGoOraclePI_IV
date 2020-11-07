@@ -31,7 +31,6 @@ func MakeHttpHandler(s Service) http.Handler {
 		addPersonRequestDecoder,
 		kithttp.EncodeJSONResponse,
 	)
-
 	r.Method(http.MethodPost, "/", addPersonHandler)
 	return r
 }
@@ -53,7 +52,7 @@ func getPersonsRequestDecoder(context context.Context, r *http.Request) (interfa
 	return request, nil
 }
 
-func addPersonRequestDecoder(context context.Context, r *http.Request) (interface{}, error) {
+func addPersonRequestDecoder(_ context.Context, r *http.Request) (interface{}, error) {
 	request := getAddPersonRequest{}
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
