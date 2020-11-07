@@ -34,6 +34,10 @@ type updatePersonRequest struct {
 	Fecha_nacimiento string
 }
 
+type deletePersonRequest struct {
+	PersonaId string
+}
+
 func makeGetPersonByIdEndPoint(s Service) endpoint.Endpoint {
 	getPersonById := func(ctx context.Context, request interface{}) (interface{}, error) {
 		rep := request.(getPersonByIdRequest)
@@ -83,4 +87,16 @@ func makeUpdatePersonEndpoint(s Service) endpoint.Endpoint {
 		return r, nil
 	}
 	return updatePersonEndpoint
+}
+
+func makeDeletePersonEndPoint(s Service) endpoint.Endpoint {
+	deletePersonEndPoint := func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(deletePersonRequest)
+		result, err := s.DeletePerson(&req)
+		if err != nil {
+			panic(err)
+		}
+		return result, nil
+	}
+	return deletePersonEndPoint
 }

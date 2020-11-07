@@ -41,6 +41,13 @@ func MakeHttpHandler(s Service) http.Handler {
 	)
 	r.Method(http.MethodPut, "/", updatePersonHandler)
 
+	//Eliminar PERSONA
+	deletePersonHandler := kithttp.NewServer(
+		makeDeletePersonEndPoint(s),
+		deletePersonRequestDecoder,
+		kithttp.EncodeJSONResponse,
+	)
+	r.Method(http.MethodDelete, "/{id}", deletePersonHandler)
 	return r
 }
 
@@ -79,4 +86,10 @@ func updatePersonRequestDecoder(context context.Context, r *http.Request) (inter
 		panic(err)
 	}
 	return request, nil
+}
+
+func deletePersonRequestDecoder(context context.Context, r *http.Request) (interface{}, error) {
+	return deletePersonRequest{
+		PersonaId: chi.URLParam(r, "id"),
+	}, nil
 }

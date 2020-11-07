@@ -11,6 +11,7 @@ type Repository interface {
 	GetTotalPersons() (int, error)
 	InsertPerson(params *getAddPersonRequest) (int64, error)
 	UpdatePerson(params *updatePersonRequest) (int64, error)
+	DeletePerson(param *deletePersonRequest) (int64, error)
 }
 
 type repository struct {
@@ -24,7 +25,7 @@ func NewRepository(dataBaseConnection *sql.DB) Repository {
 }
 
 func (repo *repository) GetPersonById(personaId string) (*Person, error) {
-	const sql = `SELECT * FROM PERSONA WHERE PERSONA_ID = :1`
+	const sql = `SELECT * FROM PERSONA WHERE PERSONA_ID = :1 AND ESTADO <> 0`
 	row := repo.db.QueryRow(sql, personaId)
 	persona := &Person{}
 	err := row.Scan(
@@ -46,7 +47,7 @@ func (repo *repository) GetPersonById(personaId string) (*Person, error) {
 
 func (repo *repository) GetPersons(params *getPersonsRequest) ([]*Person, error) {
 	const sql = `SELECT PERSONA_ID,NOMBRE,APELLIDO_P,APELLIDO_M,GENERO,DNI,FECHA_NACIMIENTO,ESTADO FROM(
-				SELECT ROWNUM COD, E.* FROM PERSONA E
+				SELECT ROWNUM COD, E.* FROM PERSONA E WHERE ESTADO <> 0
 				) WHERE COD BETWEEN :1 AND :2 
 				ORDER BY COD`
 	result, err := repo.db.Query(sql, params.Offset, params.Limit)
@@ -77,7 +78,7 @@ func (repo *repository) GetPersons(params *getPersonsRequest) ([]*Person, error)
 }
 
 func (repo *repository) GetTotalPersons() (int, error) {
-	const sql = `SELECT COUNT(*) FROM PERSONA`
+	const sql = `SELECT COUNT(*) FROM PERSONA WHERE ESTADO <> 0`
 	var total int
 
 	row := repo.db.QueryRow(sql)
@@ -135,4 +136,23 @@ func (repo *repository) UpdatePerson(params *updatePersonRequest) (int64, error)
 	}
 	id, _ := result.LastInsertId()
 	return id, nil
+}
+
+func (repo *repository) DeletePerson(param *deletePersonRequest) (int64, error) {
+	var status_query int
+
+	fmt.Println(param.PersonaId)
+	const sql = `
+				BEGIN
+					PKG_CRUD_PERSONA.SPU_ELIMINAR_PERSONA(:1, :2);
+				END;`
+	result, err := repo.db.Exec(sql, param.PersonaId, status_query)
+	if err != nil {
+		panic(err)
+	}
+	cont, err := result.RowsAffected()
+	if err != nil {
+		panic(err)
+	}
+	return cont, nil
 }
