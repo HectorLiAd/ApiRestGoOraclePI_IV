@@ -50,6 +50,7 @@ func MakeHttpHandler(s Service) http.Handler {
 		deletePersonRequestDecoder,
 		kithttp.EncodeJSONResponse,
 	)
+
 	r.Method(http.MethodDelete, "/{id}", deletePersonHandler)
 	return r
 }
@@ -80,7 +81,6 @@ func updatePersonRequestDecoder(context context.Context, r *http.Request) (inter
 	request := updatePersonRequest{}
 	//LAS PROPIEDADES DEL BODY REQUEST SE MAPEAN PARA PODER OBTENER EL FORMATO DE NUESTRA ESTRUCTURA INDICADA
 	err := json.NewDecoder(r.Body).Decode(&request)
-
 	return request, err
 }
 
