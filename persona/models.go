@@ -17,3 +17,8 @@ type PersonList struct {
 	Data         []*Person `json:"data"`
 	TotalRecords int       `json:"totalRecords"`
 }
+
+type StatusPerson struct {
+	Error  string `json:"Error"`
+	Estado string `json:"Status"`
+}

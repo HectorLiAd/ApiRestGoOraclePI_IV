@@ -42,10 +42,7 @@ func makeGetPersonByIdEndPoint(s Service) endpoint.Endpoint {
 	getPersonById := func(ctx context.Context, request interface{}) (interface{}, error) {
 		rep := request.(getPersonByIdRequest)
 		persona, err := s.GetPersonById(&rep)
-		if err != nil {
-			panic(err)
-		}
-		return persona, nil
+		return persona, err
 	}
 	return getPersonById
 }
@@ -54,10 +51,7 @@ func makeGetPersonsEndPoint(s Service) endpoint.Endpoint {
 	getPersonsEndPoint := func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(getPersonsRequest) //Conversion del request al tipo getPersonsRequest
 		result, err := s.GetPersons(&req)
-		if err != nil {
-			panic(err)
-		}
-		return result, nil
+		return result, err
 	}
 	return getPersonsEndPoint
 }
@@ -66,13 +60,8 @@ func makeAddPersonEndpoint(s Service) endpoint.Endpoint {
 	addPersonEndpoint := func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(getAddPersonRequest)
 		persona_id, err := s.InsertPerson(&req)
-
-		if err != nil {
-			panic(err)
-		}
-		return persona_id, nil
+		return persona_id, err
 	}
-
 	return addPersonEndpoint
 }
 
@@ -80,11 +69,7 @@ func makeUpdatePersonEndpoint(s Service) endpoint.Endpoint {
 	updatePersonEndpoint := func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(updatePersonRequest)
 		r, err := s.UpdatePerson(&req)
-
-		if err != nil {
-			panic(err)
-		}
-		return r, nil
+		return r, err
 	}
 	return updatePersonEndpoint
 }
@@ -93,10 +78,7 @@ func makeDeletePersonEndPoint(s Service) endpoint.Endpoint {
 	deletePersonEndPoint := func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(deletePersonRequest)
 		result, err := s.DeletePerson(&req)
-		if err != nil {
-			panic(err)
-		}
-		return result, nil
+		return result, err
 	}
 	return deletePersonEndPoint
 }

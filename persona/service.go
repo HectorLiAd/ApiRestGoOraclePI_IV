@@ -31,19 +31,20 @@ func (s *service) GetPersons(params *getPersonsRequest) (*PersonList, error) {
 
 	person, err := s.repo.GetPersons(params)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	totalPersons, err := s.repo.GetTotalPersons()
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	return &PersonList{
 		Data:         person,
 		TotalRecords: totalPersons,
-	}, nil
+	}, err
 }
 
 func (s *service) InsertPerson(params *getAddPersonRequest) (int64, error) {
+	//Usar sub-string segun
 	return s.repo.InsertPerson(params)
 }
 

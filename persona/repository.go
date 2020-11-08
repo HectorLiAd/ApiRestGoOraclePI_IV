@@ -38,10 +38,6 @@ func (repo *repository) GetPersonById(personaId string) (*Person, error) {
 		&persona.Fecha_nacimiento,
 		&persona.Estado,
 	)
-	if err != nil {
-		fmt.Println("No hay resultados")
-		panic(err)
-	}
 	return persona, err
 }
 
@@ -53,7 +49,7 @@ func (repo *repository) GetPersons(params *getPersonsRequest) ([]*Person, error)
 	result, err := repo.db.Query(sql, params.Offset, params.Limit)
 
 	if err != nil {
-		panic(err)
+		return nil, nil
 	}
 
 	var persons []*Person
@@ -70,7 +66,7 @@ func (repo *repository) GetPersons(params *getPersonsRequest) ([]*Person, error)
 			&persona.Estado,
 		)
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
 		persons = append(persons, persona)
 	}
@@ -92,7 +88,8 @@ func (repo *repository) GetTotalPersons() (int, error) {
 
 func (repo *repository) InsertPerson(params *getAddPersonRequest) (int64, error) {
 	var status_query int
-	const sql = `DECLARE
+	// var outVar interface{}
+	query := `DECLARE
 					ST_PERSONA PERSONA%ROWTYPE;
 				BEGIN
 					ST_PERSONA.NOMBRE := :1;
@@ -103,20 +100,20 @@ func (repo *repository) InsertPerson(params *getAddPersonRequest) (int64, error)
 					ST_PERSONA.FECHA_NACIMIENTO := :6;
 					PKG_CRUD_PERSONA.SPU_AGREGAR_PERSONA(ST_PERSONA, :7);
 				END;`
-	result, err := repo.db.Exec(sql, params.Nombre, params.Apellido_paterno,
+	result, err := repo.db.Exec(query, params.Nombre, params.Apellido_paterno,
 		params.Apellido_materno, params.Genero, params.Dni,
-		params.Fecha_nacimiento, status_query)
+		params.Fecha_nacimiento, sql.Out{Dest: &status_query})
+	fmt.Print(result, "\n")
 
 	if err != nil {
-		panic(err)
+		return 0, err
 	}
-	id, _ := result.LastInsertId()
-	return id, nil
+	return int64(status_query), nil
 }
 
 func (repo *repository) UpdatePerson(params *updatePersonRequest) (int64, error) {
 	var status_query int
-	const sql = `DECLARE
+	const query = `DECLARE
 					ST_PERSONA PERSONA%ROWTYPE;
 				BEGIN
 					ST_PERSONA.PERSONA_ID := :1;
@@ -128,31 +125,22 @@ func (repo *repository) UpdatePerson(params *updatePersonRequest) (int64, error)
 					ST_PERSONA.FECHA_NACIMIENTO := :7;
 					PKG_CRUD_PERSONA.SPU_ACTUALIZAR_PERSONA(ST_PERSONA, :8);
 				END;`
-	result, err := repo.db.Exec(sql, params.Id, params.Nombre, params.Apellido_paterno,
+	_, err := repo.db.Exec(query, params.Id, params.Nombre, params.Apellido_paterno,
 		params.Apellido_materno, params.Genero, params.Dni,
-		params.Fecha_nacimiento, status_query)
-	if err != nil {
-		panic(err)
-	}
-	id, _ := result.LastInsertId()
-	return id, nil
+		params.Fecha_nacimiento, sql.Out{Dest: &status_query})
+
+	return int64(status_query), err
 }
 
 func (repo *repository) DeletePerson(param *deletePersonRequest) (int64, error) {
 	var status_query int
 
 	fmt.Println(param.PersonaId)
-	const sql = `
+	const query = `
 				BEGIN
 					PKG_CRUD_PERSONA.SPU_ELIMINAR_PERSONA(:1, :2);
 				END;`
-	result, err := repo.db.Exec(sql, param.PersonaId, status_query)
-	if err != nil {
-		panic(err)
-	}
-	cont, err := result.RowsAffected()
-	if err != nil {
-		panic(err)
-	}
-	return cont, nil
+	_, err := repo.db.Exec(query, param.PersonaId, sql.Out{Dest: &status_query})
+
+	return int64(status_query), err
 }

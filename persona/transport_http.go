@@ -12,6 +12,7 @@ import (
 func MakeHttpHandler(s Service) http.Handler {
 	r := chi.NewRouter()
 
+	//Obtener personas por su identificador
 	getPersonByHandler := kithttp.NewServer(
 		makeGetPersonByIdEndPoint(s),
 		getPersonByIdRequestDecoder,
@@ -19,6 +20,7 @@ func MakeHttpHandler(s Service) http.Handler {
 	)
 	r.Method(http.MethodGet, "/{id}", getPersonByHandler)
 
+	//Obtener personas paginadas
 	getPersonHandler := kithttp.NewServer(
 		makeGetPersonsEndPoint(s),
 		getPersonsRequestDecoder,
@@ -26,6 +28,7 @@ func MakeHttpHandler(s Service) http.Handler {
 	)
 	r.Method(http.MethodPost, "/paginated", getPersonHandler)
 
+	//Agregar a una persona
 	addPersonHandler := kithttp.NewServer(
 		makeAddPersonEndpoint(s),
 		addPersonRequestDecoder,
@@ -62,19 +65,14 @@ func getPersonByIdRequestDecoder(context context.Context, r *http.Request) (inte
 func getPersonsRequestDecoder(context context.Context, r *http.Request) (interface{}, error) {
 	request := getPersonsRequest{}
 	err := json.NewDecoder(r.Body).Decode(&request) //EL REQUEST QUE QUEREMOS DECODIFICAR ESTA EN BADY
-	if err != nil {
-		panic(err)
-	}
-	return request, nil
+
+	return request, err
 }
 
 func addPersonRequestDecoder(_ context.Context, r *http.Request) (interface{}, error) {
 	request := getAddPersonRequest{}
 	err := json.NewDecoder(r.Body).Decode(&request)
-	if err != nil {
-		panic(err)
-	}
-	return request, nil
+	return request, err
 }
 
 //Decodificar los PROPIEDADES QUE ESTAN EN EL BY DEL REQUEST
@@ -82,10 +80,8 @@ func updatePersonRequestDecoder(context context.Context, r *http.Request) (inter
 	request := updatePersonRequest{}
 	//LAS PROPIEDADES DEL BODY REQUEST SE MAPEAN PARA PODER OBTENER EL FORMATO DE NUESTRA ESTRUCTURA INDICADA
 	err := json.NewDecoder(r.Body).Decode(&request)
-	if err != nil {
-		panic(err)
-	}
-	return request, nil
+
+	return request, err
 }
 
 func deletePersonRequestDecoder(context context.Context, r *http.Request) (interface{}, error) {
