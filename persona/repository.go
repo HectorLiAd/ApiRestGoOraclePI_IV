@@ -2,7 +2,6 @@ package persona
 
 import (
 	"database/sql"
-	"fmt"
 )
 
 type Repository interface {
@@ -98,10 +97,9 @@ func (repo *repository) InsertPerson(params *getAddPersonRequest) (int64, error)
 					ST_PERSONA.FECHA_NACIMIENTO := :6;
 					PKG_CRUD_PERSONA.SPU_AGREGAR_PERSONA(ST_PERSONA, :7);
 				END;`
-	result, err := repo.db.Exec(query, params.Nombre, params.Apellido_paterno,
+	_, err := repo.db.Exec(query, params.Nombre, params.Apellido_paterno,
 		params.Apellido_materno, params.Genero, params.Dni,
 		params.Fecha_nacimiento, sql.Out{Dest: &status_query})
-	fmt.Print(result, "\n")
 
 	if err != nil {
 		return 0, err
@@ -133,7 +131,6 @@ func (repo *repository) UpdatePerson(params *updatePersonRequest) (int64, error)
 func (repo *repository) DeletePerson(param *deletePersonRequest) (int64, error) {
 	var status_query int
 
-	fmt.Println(param.PersonaId)
 	const query = `
 				BEGIN
 					PKG_CRUD_PERSONA.SPU_ELIMINAR_PERSONA(:1, :2);
