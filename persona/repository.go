@@ -80,10 +80,8 @@ func (repo *repository) GetTotalPersons() (int, error) {
 	row := repo.db.QueryRow(sql)
 
 	err := row.Scan(&total)
-	if err != nil {
-		panic(err)
-	}
-	return total, nil
+
+	return total, err
 }
 
 func (repo *repository) InsertPerson(params *getAddPersonRequest) (int64, error) {
