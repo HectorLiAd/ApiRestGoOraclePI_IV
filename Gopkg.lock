@@ -10,6 +10,14 @@
   version = "v4.1.2"
 
 [[projects]]
+  digest = "1:f9a29f08ff5ae603e82a7f59a9da386c9990844f9bb418d624fd3a8a02c8b242"
+  name = "github.com/go-chi/cors"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "9e1bf52b235ac2a7f9109b93d2012bc88336b4ac"
+  version = "v1.1.1"
+
+[[projects]]
   digest = "1:5e7a33ced74ca175463d277fdae4a674d1aef4e5e3934f27d8d707df4fb6d0fc"
   name = "github.com/go-kit/kit"
   packages = [
@@ -43,6 +51,7 @@
   analyzer-version = 1
   input-imports = [
     "github.com/go-chi/chi",
+    "github.com/go-chi/cors",
     "github.com/go-kit/kit/endpoint",
     "github.com/go-kit/kit/transport/http",
     "github.com/mattn/go-oci8",
