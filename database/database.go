@@ -9,7 +9,7 @@ import (
 
 func InitDB() *sql.DB {
 	//connectionString := "root:hector@tcp(localhost:3306)/northwind"
-	connectionString := "PI_IV/HECTOR@localhost:1521/ORCL"
+	connectionString := "DBII/123456@52.205.132.127:1521/orcl"
 	databaseConnection, err := sql.Open("oci8", connectionString)
 	if err != nil {
 		fmt.Println("Conexion invalida")

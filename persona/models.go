@@ -1,16 +1,14 @@
 package persona
 
-import "time"
-
 type Person struct {
-	Id               string    `json:"id"`
-	Nombre           string    `json:"nombre_personal"`
-	Apellido_paterno string    `json:"apellido_paterno"`
-	Apellido_materno string    `json:"apellido_materno"`
-	Genero           string    `json:"Genero"`
-	Dni              string    `json:"dni"`
-	Fecha_nacimiento time.Time `json:"fecha_nacimiento"`
-	Estado           int       `json:"estado"`
+	Id               string `json:"id"`
+	Nombre           string `json:"nombre_personal"`
+	Apellido_paterno string `json:"apellido_paterno"`
+	Apellido_materno string `json:"apellido_materno"`
+	Genero           string `json:"Genero"`
+	Dni              string `json:"dni"`
+	Fecha_nacimiento string `json:"fecha_nacimiento"`
+	Estado           int    `json:"estado"`
 }
 
 type PersonList struct {

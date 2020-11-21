@@ -2,6 +2,8 @@ package persona
 
 import (
 	"database/sql"
+	"time"
+	// "fmt"
 )
 
 type Repository interface {
@@ -24,8 +26,9 @@ func NewRepository(dataBaseConnection *sql.DB) Repository {
 }
 
 func (repo *repository) GetPersonById(personaId string) (*Person, error) {
-	const sql = `SELECT * FROM PERSONA WHERE PERSONA_ID = :1 AND ESTADO <> 0`
+	const sql = `SELECT * FROM PERSONA_01 WHERE PERSONA_ID = :1 AND ESTADO <> 0`
 	row := repo.db.QueryRow(sql, personaId)
+	var fecha_nac time.Time
 	persona := &Person{}
 	err := row.Scan(
 		&persona.Id,
@@ -34,19 +37,22 @@ func (repo *repository) GetPersonById(personaId string) (*Person, error) {
 		&persona.Apellido_materno,
 		&persona.Genero,
 		&persona.Dni,
-		&persona.Fecha_nacimiento,
+		&fecha_nac,
 		&persona.Estado,
 	)
+	// year, month, day := fecha_nac.Date()
+	// fmt.Printf("Date : [%d]year : [%d]month : [%d]day \n", year, month, day)
+	persona.Fecha_nacimiento = fecha_nac.Format("02/01/2006")
 	return persona, err
 }
 
 func (repo *repository) GetPersons(params *getPersonsRequest) ([]*Person, error) {
 	const sql = `SELECT PERSONA_ID,NOMBRE,APELLIDO_P,APELLIDO_M,GENERO,DNI,FECHA_NACIMIENTO,ESTADO FROM(
-				SELECT ROWNUM COD, E.* FROM PERSONA E WHERE ESTADO <> 0
+				SELECT ROWNUM COD, E.* FROM ( SELECT * FROM PERSONA_01 ORDER BY PERSONA_ID ) E WHERE ESTADO <> 0
 				) WHERE COD BETWEEN :1 AND :2 
 				ORDER BY COD`
 	result, err := repo.db.Query(sql, params.Offset, params.Limit)
-
+	var fecha_nac time.Time
 	if err != nil {
 		return nil, nil
 	}
@@ -61,19 +67,20 @@ func (repo *repository) GetPersons(params *getPersonsRequest) ([]*Person, error)
 			&persona.Apellido_materno,
 			&persona.Genero,
 			&persona.Dni,
-			&persona.Fecha_nacimiento,
+			&fecha_nac,
 			&persona.Estado,
 		)
 		if err != nil {
 			return nil, err
 		}
+		persona.Fecha_nacimiento = fecha_nac.Format("02/01/2006")
 		persons = append(persons, persona)
 	}
 	return persons, nil
 }
 
 func (repo *repository) GetTotalPersons() (int, error) {
-	const sql = `SELECT COUNT(*) FROM PERSONA WHERE ESTADO <> 0`
+	const sql = `SELECT COUNT(*) FROM PERSONA_01 WHERE ESTADO <> 0`
 	var total int
 
 	row := repo.db.QueryRow(sql)
@@ -87,7 +94,7 @@ func (repo *repository) InsertPerson(params *getAddPersonRequest) (int64, error)
 	var status_query int
 	// var outVar interface{}
 	query := `DECLARE
-					ST_PERSONA PERSONA%ROWTYPE;
+					ST_PERSONA PERSONA_01%ROWTYPE;
 				BEGIN
 					ST_PERSONA.NOMBRE := :1;
 					ST_PERSONA.APELLIDO_P := :2;
@@ -100,7 +107,6 @@ func (repo *repository) InsertPerson(params *getAddPersonRequest) (int64, error)
 	_, err := repo.db.Exec(query, params.Nombre, params.Apellido_paterno,
 		params.Apellido_materno, params.Genero, params.Dni,
 		params.Fecha_nacimiento, sql.Out{Dest: &status_query})
-
 	if err != nil {
 		return 0, err
 	}
@@ -110,7 +116,7 @@ func (repo *repository) InsertPerson(params *getAddPersonRequest) (int64, error)
 func (repo *repository) UpdatePerson(params *updatePersonRequest) (int64, error) {
 	var status_query int
 	const query = `DECLARE
-					ST_PERSONA PERSONA%ROWTYPE;
+					ST_PERSONA PERSONA_01%ROWTYPE;
 				BEGIN
 					ST_PERSONA.PERSONA_ID := :1;
 					ST_PERSONA.NOMBRE := :2;
