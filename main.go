@@ -3,6 +3,7 @@ package main
 import (
 	_ "database/sql"
 	"net/http"
+	"os"
 
 	"github.com/go-chi/chi"
 	_ "github.com/mattn/go-oci8"
@@ -23,6 +24,12 @@ func main() {
 
 	r.Use(helper.GetCors().Handler)
 	r.Mount("/persona", persona.MakeHttpHandler(personaServicio))
-	http.ListenAndServe(":3000", r)
+
+	PORT := os.Getenv("PORT")
+	if PORT == "" {
+		PORT = "8080"
+	}
+
+	http.ListenAndServe(":"+PORT, r)
 
 }
