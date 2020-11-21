@@ -15,7 +15,7 @@ type getPersonsRequest struct {
 	Offset int //DE QUE NUMERO DE FILA INICIARA LA CONSULTA
 }
 
-type getAddPersonRequest struct {//
+type getAddPersonRequest struct { //
 	Nombre           string
 	Apellido_paterno string
 	Apellido_materno string
